@@ -1,0 +1,65 @@
+"""
+출차된 내역이 없다면, 23:59에 출차된 것으로 간주
+
+차량별 누적 주차시가능ㄹ 계산하여 요금을 일괄로 정산
+
+누적 주차 시간 <= 기본 시간 : 기본 요금
+누적 주차 시간 > 기본 시간 : 기본 요금 + (초과한 시간/단위시간)* 단위요금
+"""
+import math
+
+# 시간을 분으로 통일
+def calc_time(t):
+    return int(t[0:2])*60 + int(t[3:5])
+
+# fees : 기본 시간, 기본 요금, 단위 시간, 단위 요금
+# records[i] : 시각 차량번호 내역
+def solution(fees, records):
+    answer = []
+    
+    car = dict() # 입차한 시간 저장
+    time = dict() # 자동차 별 누적 시간 저장
+    
+    for record in records:
+        t, num, info = record.split()
+        
+        # 입차
+        if info=="IN":
+            car[num] = t
+        
+        # 출차
+        else:
+            # 입차 시간
+            in_time = car.pop(num)
+            total = calc_time(t)- calc_time(in_time)
+            
+            # 시간 계산
+            if num in time:
+                time[num]+= total
+            else:
+                time[num] = total
+    
+    # 출차를 하지 않은 차가 있는 경우
+    for num in car:
+        total = calc_time("23:59")- calc_time(car[num])
+        
+        # 시간 계산
+        if num in time:
+            time[num]+= total
+        else:
+            time[num] = total
+    
+    # 누적 요금 계산
+    for num, time in sorted(time.items()):
+        # 기본 시간 이하
+        if time <= fees[0]:
+            answer.append(fees[1]) # 기본 요금
+        # 기본 시간 초과
+        else:
+            # 초과한 시간
+            add_time = time - fees[0]
+            
+            # 기본 요금 + 추가 요금
+            answer.append(fees[1] + math.ceil(add_time/fees[2])* fees[3])
+    
+    return answer
