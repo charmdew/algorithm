@@ -1,0 +1,81 @@
+"""
+- 열쇠는 회전과 이동 가능
+- 열쇠의 돌기(1) 부분과 자물쇠의 홈(0) 부분이 정확히 일치해야 함
+- 열쇠의 돌기와 자물쇠의 돌기가 만나서는 안됨
+- 자물쇠의 모든 홈을 채워 비어있는 곳이 없어야 자물쇠를 열 수 있음
+
+열쇠로 자물쇠를 열수 있으면 : true
+            열수 없으면 : false
+"""
+
+# 90도 시계방향 회전
+def rotate(key):
+    M = len(key)
+    
+    n_key = [[0]*M for _ in range(M)]
+    for i in range(M):
+        for j in range(M):
+            n_key[j][M-1-i] = key[i][j]
+    return n_key
+
+
+# key (M*M)크기만큼 탐색
+def check_part(x, y, key, n_lock, N, M, hole):
+    cnt = 0 
+    for i in range(M):
+        for j in range(M):
+            if x+i<M-1 or x+i>N+M-2 or y+j<M-1 or y+j>N+M-2:
+                continue
+                    
+            if key[i][j] ==1:
+                # 열쇠의 돌기 부분과 자물쇠의 홈 부분이 일치하는 경우
+                if n_lock[x+i][y+j]==0:
+                    cnt += 1
+                # 열쇠의 돌기 부분과 자물쇠의 돌기 부분이 만나면 False
+                else:
+                    return False
+    
+    # 기존 자물쇠의 홈 개수와 같다면 True    
+    return cnt == hole
+
+def check(key, n_lock, N, M, hole):
+    # 기준점 이동하면서 전체 확인
+    for x in range(N+M-1):
+        for y in range(N+M-1):
+            if check_part(x, y, key, n_lock, N, M, hole):
+                # print("가능!!!!", a, b)
+                return True
+    return False
+
+def solution(key, lock):
+    answer = False
+    
+    M, N = len(key), len(lock)
+    
+    # 자물쇠 확장 
+    n_lock = [[1]*(N+(2*M-2)) for i in range((N+(2*M-2)))]
+
+    # 자물쇠에 있는 홈 개수 저장    
+    hole = 0
+    for i in range(N):
+        for j in range(N):
+            if lock[i][j]==0:
+                hole +=1
+
+    # 확장한 자물쇠 가운데에 기존 자물쇠 값 저장
+    for i in range(N):
+        for j in range(N):
+            n_lock[M-1+i][M-1+j] = lock[i][j]
+    
+    
+    for i in range(4):
+        # 전체 탐색
+        if check(key, n_lock, N, M, hole):
+            # print("가능하다!!!!", i)
+            answer = True
+            break
+        
+        # 90도 시계방향 회전
+        key = rotate(key)
+            
+    return answer
