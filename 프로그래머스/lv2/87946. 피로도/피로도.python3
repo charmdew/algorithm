@@ -1,0 +1,29 @@
+"""
+탐험 시작(필요) - 최소 필요 피로도
+탐험 종료(소모) - 소모 피로도
+
+던전을 최대한 많이 탐험
+"""
+
+from itertools import permutations
+
+def solution(k, dungeons):
+    answer = 0
+    
+    l = len(dungeons)
+    dun = list(range(l))
+    
+    # 가능한 모든 경우
+    cases = permutations(dun, l)
+    
+    for case in cases:
+        cur = k     # 현재 피로도
+        cnt = 0     # 탐험할 수 있는 던전 갯수
+        for c in case:
+            # c[0]: 최소 필요 피로도, c[1]: 소모 피로도
+            if cur >= dungeons[c][0]:
+                cnt +=1
+            cur -= dungeons[c][1]
+        answer = max(answer, cnt)
+            
+    return answer
