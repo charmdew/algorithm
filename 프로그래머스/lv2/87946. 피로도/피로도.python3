@@ -20,10 +20,13 @@ def solution(k, dungeons):
         cur = k     # 현재 피로도
         cnt = 0     # 탐험할 수 있는 던전 갯수
         for c in case:
-            # c[0]: 최소 필요 피로도, c[1]: 소모 피로도
+            # dungeons[c][0] : 최소 필요 피로도
+            # dungeons[c][1] : 소모 피로도
             if cur >= dungeons[c][0]:
                 cnt +=1
             cur -= dungeons[c][1]
-        answer = max(answer, cnt)
+        
+        # 탐험할 수 있는 최대 던전 수 
+        answer = max(answer, cnt)   
             
     return answer
