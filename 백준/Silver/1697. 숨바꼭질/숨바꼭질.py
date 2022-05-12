@@ -3,7 +3,7 @@ from collections import deque
 INF = 100001
 
 def bfs(N, K):
-  l = INF+INF//2
+  l = int(max(N, K)*1.5)
   # 해당 위치로 이동하는데 걸리는 최단 시간 저장
   time = [INF]*(l+1)
   time[N] = 0  
