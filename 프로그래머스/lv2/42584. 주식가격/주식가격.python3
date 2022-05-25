@@ -1,25 +1,17 @@
-import math 
-
 def solution(prices):
-    answer = [0]*len(prices)
-    
+    answer = [0] * len(prices)
+
     stack = []
     for i, price in enumerate(prices):
-        s = []
-        while stack:    # 스택에 있는 값 확인
+        # 가격이 떨어지는 경우
+        while stack and price < stack[-1][0]:
             p, idx = stack.pop()
-            # 가격이 떨어지는 경우
-            if price< p:
-                # i-idx 초 후에 가격이 떨어짐
-                answer[idx] = i-idx
-                continue
-            # 가격이 떨어지지 않는 경우 리스트에 추가
-            s.append((p, idx))
-        stack = s                   # 스택에 s 리스트값 대입
-        stack.append((price, i))    # 스택에 [가격, 현재 시점] 추가
+            # i-idx 초 후에 가격이 떨어짐
+            answer[idx] = i - idx
+        stack.append((price, i))  # 스택에 [가격, 현재 시점] 추가
 
     # 끝까지 가격이 떨어지지 않는 경우
     for p, idx in stack:
-        answer[idx] = len(prices)-1-idx
-    
+        answer[idx] = len(prices) - 1 - idx
+
     return answer
