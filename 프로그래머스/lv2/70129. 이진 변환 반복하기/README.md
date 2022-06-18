@@ -1,6 +1,6 @@
 # [level 2] 이진 변환 반복하기 - 70129 
 
-[문제 링크](https://programmers.co.kr/learn/courses/30/lessons/70129?language=python3) 
+[문제 링크](https://programmers.co.kr/learn/courses/30/lessons/70129) 
 
 ### 성능 요약
 
