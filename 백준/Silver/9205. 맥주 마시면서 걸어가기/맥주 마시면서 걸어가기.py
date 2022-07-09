@@ -4,9 +4,9 @@ import sys
 input = sys.stdin.readline
 
 
-def bfs(a, b, store, rock):
+def bfs():
     q = deque()
-    q.append((a, b))
+    q.append(home)
 
     # 편의점 방문여부 저장
     v = [0] * len(store)
@@ -33,7 +33,7 @@ for t in range(int(input())):
     store = [list(map(int, input().split())) for _ in range(n)]
     rock = list(map(int, input().split()))
 
-    if bfs(home[0], home[1], store, rock):
+    if bfs():
         print("happy")
     else:
         print("sad")
