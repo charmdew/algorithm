@@ -25,7 +25,7 @@ while q:
         break
 
     for g in graph[x]:
-        if info[g] > info[x]+1:
+        if info[g] == 101:
             info[g] = info[x]+1
             q.append(g)
 
