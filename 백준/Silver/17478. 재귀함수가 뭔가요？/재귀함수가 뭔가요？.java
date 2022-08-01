@@ -1,9 +1,11 @@
 import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Main {
 
 	static int N;	// 출력을 원하는 재귀 횟수	
-	static String front="_";
 	
 	static void printContent(int cnt, String content) {
 		for (int i = 0; i < 4*cnt; i++) {
@@ -27,11 +29,12 @@ public class Main {
 		printContent(n, "라고 답변하였지.");
 	}
 	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Scanner sc = new Scanner(System.in);
+	public static void main(String[] args) throws IOException {
+//		Scanner sc = new Scanner(System.in);
+//		N = sc.nextInt();
 		
-		N = sc.nextInt();
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(in.readLine());
 		
 		System.out.println("어느 한 컴퓨터공학과 학생이 유명한 교수님을 찾아가 물었다.");
 		recur(0);
