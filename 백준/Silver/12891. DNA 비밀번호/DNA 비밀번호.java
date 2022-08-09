@@ -1,6 +1,5 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
@@ -20,17 +19,15 @@ public class Main {
 		String DNA = in.readLine();
 		
 		st = new StringTokenizer(in.readLine(), " ");
+		
 		// 부분문자열에 포함되어야 할 {‘A’, ‘C’, ‘G’, ‘T’} 의 최소 개수 저장
 		int[] cnt = new int[4];
+		// 부분 문자열의 {‘A’, ‘C’, ‘G’, ‘T’} 개수
+		int[] subCnt = new int[4];
+		
 		for(int i=0; i<4; i++) {
 			cnt[i] = Integer.parseInt(st.nextToken());
 		}
-		
-		HashMap<Character, Integer> code = new HashMap<>();
-		code.put('A', 0);
-		code.put('C', 1);
-		code.put('G', 2);
-		code.put('T', 3);
 
 		// 만들 수 있는 비밀번호의 종류의 수
 		int kindCnt = 0;
@@ -38,15 +35,12 @@ public class Main {
 		// 부분문자열 저장 - Character를 담은 큐 사용
 		Queue<Character> queue = new LinkedList<>();
 
-		// 부분 문자열의 {‘A’, ‘C’, ‘G’, ‘T’} 개수
-		int[] subCnt = new int[4];
-		
+		// 큐 초기화
 		for(int i=0; i<P; i++) {
 			queue.add(DNA.charAt(i));
-			subCnt[code.get(DNA.charAt(i))] += 1;
+			subCnt[getCodeIdx(DNA.charAt(i))] += 1;
 		}
-		if (check(cnt, subCnt)) kindCnt += 1;
-//		System.out.println(queue+", "+kindCnt);
+		if(check(cnt, subCnt)) kindCnt+=1;
 		
 		char s, e;
 		for(int i= P; i<S; i++) {
@@ -56,12 +50,11 @@ public class Main {
 			e = DNA.charAt(i);
 			queue.add(e);
 			
-			subCnt[code.get(s)]-=1;	// 뺀 문자 개수 -1
-			subCnt[code.get(e)]+=1;	// 넣은 문자 개수 +1
+			subCnt[getCodeIdx(s)]-=1;	// 뺀 문자 개수 -1
+			subCnt[getCodeIdx(e)]+=1;	// 넣은 문자 개수 +1
 		
 			// 가능한 비밀번호인지 체크
 			if (check(cnt, subCnt)) kindCnt += 1;
-//			System.out.println(queue+", "+kindCnt);
 		}
 		System.out.println(kindCnt);
 		
@@ -77,5 +70,23 @@ public class Main {
 		}
 		return true;
 	}
-
+	
+	public static int getCodeIdx(char code) {
+		int idx = -1;
+		switch(code) {
+		case 'A':
+			idx = 0;
+			break;
+		case 'C':
+			idx = 1;
+			break;
+		case 'G':
+			idx = 2;
+			break;
+		case 'T':
+			idx = 3;
+			break;
+		}
+		return idx;
+	}
 }
