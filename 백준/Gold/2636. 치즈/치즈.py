@@ -1,72 +1,73 @@
-import sys
 from collections import deque
+import sys
 
 input = sys.stdin.readline
 
-H, W = map(int, input().split())
+N, M = map(int, input().split())
 
-board = [[] for _ in range(H+2)]
-# 판의 가장자리 추가
-board[0] = [0]*(W+2)
-for i in range(1, H+1):
-    board[i] = [0] + list(map(int, input().split())) + [0]
-board[H+1] = [0]*(W+2)
+board = [list(map(int, input().split())) for _ in range(N)]
 
-# 치즈 개수
-cheeseCnt = 0
-for i in range(H):
-    for j in range(W):
-        if board[i][j]==1:
-            cheeseCnt += 1
+time = 0    # 모두 녹아서 없어지는 데 걸리는 시간
+cnt = 0     # 남아있는 치즈 수
+result = 0  # 모두 녹기 한시간 전에 남아있는 치즈 조각 수
 
-# 상, 하, 좌, 우
-dx = [-1, 1, 0, 0]
-dy = [0, 0, -1, 1]
+# 치즈 개수 세기
+for r in range(N):
+    for c in range(M):
+        if board[r][c] == 1:
+            cnt += 1
 
 
-def melt(edge):
-    v = [[0] * (W + 2) for _ in range(H + 2)]
+def boundary():
+    for i in range(N):
+        for j in range(M):
+            if board[i][j] == 0:
+                bfs(i, j)
+                return
 
-    q = deque(edge)
-    v[0][0] = 1
-    c = []  # 공기와 접촉한 칸 위치 저장
+
+def bfs(a, b):
+    global cnt, result
+
+    visited = [[False]*M for _ in range(N)]
+
+    q = deque()
+    q.append((a, b))
+    visited[a][b] = True
+
+    dx = [-1, 1, 0, 0]
+    dy = [0, 0, -1, 1]
+
+    cheese = []
+
     while q:
         x, y = q.popleft()
 
-        # 인접한 곳 방문
         for i in range(4):
             nx = x + dx[i]
             ny = y + dy[i]
 
-            # 경계 체크, 방문 체크
-            if nx < 0 or nx >= H + 2 or ny < 0 or ny >= W + 2 or v[nx][ny] == 1:
+            if nx<0 or nx>=N or ny<0 or ny>=M or visited[nx][ny]:
                 continue
-
-            # 방문 표시
-            v[nx][ny] = 1
 
             # 치즈가 있는 곳이라면
             if board[nx][ny] == 1:
-                # 경계로 바꿔주기
                 board[nx][ny] = 2
-                c.append([nx, ny])
-                continue
+                cheese.append((nx, ny))
+            if board[nx][ny] == 0:
+                q.append((nx, ny))
+                visited[nx][ny] = True
 
-            q.append([nx, ny])
+    for cx, cy in cheese:
+        board[cx][cy] = 0
 
-    return c
+    cnt -= len(cheese)      # 남은 치즈 개수 줄이기
+    result = len(cheese)    # 현재 시간에 녹은 치즈 수
 
 
-# 공기와 접촉한 칸(c) 구하기
-boundary = [[0, 0], [0, W+1], [H+1, 0], [H+1, W+1]]
-
-time = 0    # 치즈가 모두 녹아 없어지는 데 걸리는 시간
-answer = 0  # 모두 녹기 한 시간 전에 남아있는 치즈 조각 개수
-while cheeseCnt>0:
-    answer = cheeseCnt
-    time +=1
-    boundary = melt(boundary)   #'c' 영역 구하기
-    cheeseCnt -= len(boundary)
+while cnt > 0:
+    time += 1
+    boundary()
 
 print(time)
-print(answer)
+print(result)

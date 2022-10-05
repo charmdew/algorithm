@@ -4,7 +4,7 @@
 
 ### 성능 요약
 
-메모리: 32508 KB, 시간: 140 ms
+메모리: 32492 KB, 시간: 124 ms
 
 ### 분류
 
@@ -22,11 +22,11 @@
 
 <p>다시 한 시간 후에는 <그림 2>에서 ‘c’로 표시된 부분이 녹아 없어져서 <그림 3>과 같이 된다.</p>
 
-<p style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/b099f661-9788-4183-bd62-1e98e6f184e7/-/preview/" style="width: 234px; height: 232px;"></p>
+<p style="text-align: center;"><img alt="" src="" style="width: 234px; height: 232px;"></p>
 
 <p style="text-align: center;"><그림 2> 한 시간 후의 치즈 모양</p>
 
-<p style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/58fc0743-794b-4e27-84e8-fe491ec7bf3d/-/preview/" style="width: 234px; height: 232px;"></p>
+<p style="text-align: center;"><img alt="" src="" style="width: 234px; height: 232px;"></p>
 
 <p style="text-align: center;"><그림 3> 두 시간 후의 치즈 모양</p>
 
