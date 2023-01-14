@@ -9,21 +9,10 @@ N = int(input())
 P = [0]+[*map(int, input().split())]
 
 # dp[i] : 카드 i개를 갖기 위해 지불해야 하는 금액 최댓값
-dp = [0] * (N+1)
-dp[0], dp[1] = 0, P[1]
+dp = [*P]
 
+for i in range(1, N+1):
+    for j in range(1, i//2+1):
+        dp[i] = max(dp[j]+dp[i-j], dp[i])
 
-def price(x):
-    if dp[x] > 0:
-        return dp[x]
-
-    result = P[x]
-    for i in range(1, x//2+1):
-        result = max(price(i)+price(x-i), result)
-
-    dp[x] = result
-
-    return dp[x]
-
-
-print(price(N))
+print(dp[N])
