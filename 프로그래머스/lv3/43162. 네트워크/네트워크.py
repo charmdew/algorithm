@@ -1,36 +1,35 @@
 from collections import deque
 
-ans = 0
-
-def bfs(n, graph, computers):
-    global ans
-    
-    visited = [0] * n
-    
-    for i in range(n):
-        q = deque()
-        
-        if visited[i]==0:
-            visited[i]=1
-            ans+=1
-            q.append(graph[i])
-            while q:
-                v = q.popleft()
-                for j in range(len(v)):        
-                    if visited[v[j]]==0:
-                        visited[v[j]]=1
-                        q.append(graph[v[j]])
-    
 def solution(n, computers):
+    answer = 0
+    
     graph = [[] for _ in range(n)]
-    
     for i in range(n):
-        for j in range(n):
-            if computers[i][j]==1 and i!=j:
-                graph[i].append(j)
-                
-    print(graph)
-    bfs(n, graph, computers)
+        graph[i] = [x for x in range(n) if x!=i and computers[i][x]==1]
     
-    answer = ans
+    # 방문여부 저장
+    visited = [False] * n
+    for i in range(n):
+        # 방문했던 곳이라면 넘어감
+        if visited[i]:
+            continue
+        
+        # 방문했던 곳이 아닌 경우 네트워크 하나 추가
+        answer += 1
+        
+        # bfs 수행
+        q = deque()
+        q.append(i)
+        
+        while q:
+            cur = q.popleft()
+            
+            for x in graph[cur]:
+                if visited[x]:
+                    continue
+                
+                # 네트워크 연결된 곳 방문 처리
+                visited[x] = True
+                q.append(x)
+            
     return answer
