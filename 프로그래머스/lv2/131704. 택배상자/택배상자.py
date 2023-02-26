@@ -14,10 +14,7 @@ def solution(order):
     sub_container = [0]
     
     i = 0
-    while True:
-        if i>=N:
-            break
-            
+    while i<N:  
         # 컨테이너 맨 앞에 놓인 상자가 현재 트럭에 실어야 하는 순서인 경우
         if container and container[0] == order[i]:
             container.popleft()
