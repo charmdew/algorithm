@@ -17,12 +17,12 @@ def solution(sticker):
     dp[1] = sticker[0]
     for i in range(2, N):
         dp[i] = max(dp[i-1], dp[i-2] + sticker[i-1])
-    n_sum = max(dp)
+    n_sum = dp[-1]
     
     dp[1] = sticker[1]
     for i in range(2, N):
         dp[i] = max(dp[i-1], dp[i-2] + sticker[i])
-    n_sum = max(max(dp), n_sum)
+    n_sum = max(dp[-1], n_sum)
         
     answer = n_sum    
         
