@@ -21,9 +21,6 @@ water = [[False]*C for _ in range(R)]
 q_s = deque()
 visited = [[False]*C for _ in range(R)]
 
-# 이동하지 못하는 칸수
-cnt = 0
-
 for i in range(R):
     for j in range(C):
         if forest[i][j] == 'S':
@@ -32,9 +29,6 @@ for i in range(R):
         if forest[i][j] == '*':
             q_water.append((i, j))
             water[i][j] = True
-            cnt += 1
-        if forest[i][j] == 'X':
-            cnt += 1
 
 # 걸리는 시간
 time = 0
@@ -64,7 +58,6 @@ while True:
 
             tmp_water.append((nr, nc))
             water[nr][nc] = True
-            cnt += 1
     q_water = tmp_water
 
     # 고슴도치 이동
@@ -94,10 +87,9 @@ while True:
 
     if safe:
         break
-    # print(time, water, visited)
 
-    # 더 이상 이동할 수 없다면
-    if cnt == R*C-2 or not q_s:
+    # 두더지가 더 이상 이동할 수 없다면
+    if not q_s:
         break
 
 print(time if safe else "KAKTUS")
