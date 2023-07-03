@@ -1,5 +1,3 @@
-# 두 동영상이 서로 얼마나 가까운 지를 측정하는 단위 : USADO
-
 import sys
 from collections import deque
 
@@ -7,40 +5,40 @@ input = sys.stdin.readline
 
 N, Q = map(int, input().split())
 
+# 유사도 저장
 graph = [[] for _ in range(N+1)]
+
+# 두 동영상 쌍의 USADO 입력
 for _ in range(N-1):
     p, q, r = map(int, input().split())
 
-    graph[p].append([q, r])
-    graph[q].append([p, r])
+    graph[p].append((q, r))
+    graph[q].append((p, r))
 
-INF = 1e9
-for i in range(Q):
-    answer = 0
-
+# 임의의 두 쌍 사이의 USADO 구하기
+# 경로의 모든 연결들의 USADO 중 최솟값
+for _ in range(Q):
     k, v = map(int, input().split())
 
-    # USADO 중 최솟값 저장
-    usado = [INF] * (N+1)
-
+    # print("정점 ", v)
     q = deque()
-    q.append(v)     # 시작 동영상
+    q.append((v, 1e9))
 
+    visited = [0] * (N+1)
+    visited[v] = 1
+
+    cnt = 0
     while q:
-        e = q.popleft()
+        x, u = q.popleft()
 
-        for g in graph[e]:
-            # g[0]: 연결된 동영상, g[1]: USADO 값
-            if g[0] == v:   # 시작 동영상인 경우 넘어감
-                continue
+        # USADO가 K 이상인 모든 동영상 추천
+        for to, w in graph[x]:
+            # print("연결 동영상", to, w)
+            next = min(w, u)
 
-            # 방문하지 않았던 동영상인 경우
-            if usado[g[0]] == INF:
-                # USADO 중 최솟값 저장
-                usado[g[0]] = min(g[1], usado[e])
-                q.append(g[0])
+            if next >= k and visited[to] == 0:
+                cnt += 1
+                visited[to] = 1
+                q.append((to, min(w, u)))
 
-                if usado[g[0]] >= k:
-                    answer += 1
-
-    print(answer)
+    print(cnt)
