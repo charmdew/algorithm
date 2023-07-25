@@ -18,9 +18,14 @@ for _ in range(M):
 def dijkstra(start):
     q = []
     heapq.heappush(q, (0, start))
+    cost[start] = 0
 
     while q:
         c, now = heapq.heappop(q)
+
+        # 이미 처리된 적이 있는 곳이라면 무시
+        if cost[now] < c:
+            continue
 
         for x, cc in graph[now]:
             nc = c + cc
