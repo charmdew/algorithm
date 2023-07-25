@@ -1,6 +1,5 @@
-# bfs 사용
+# df 사용
 import sys
-from collections import deque
 
 input = sys.stdin.readline
 
@@ -15,37 +14,32 @@ dy = [0, 0, -1, 1]
 complex = []
 
 
-def bfs(r, c):
-    q = deque()
-    q.append((r, c))
-    board[r][c] = -1
+def dfs(x, y):
+    global cnt
 
-    cnt = 1
-    while q:
-        x, y = q.popleft()
+    for d in range(4):
+        nx = x + dx[d]
+        ny = y + dy[d]
 
-        for d in range(4):
-            nx = x + dx[d]
-            ny = y + dy[d]
+        if nx < 0 or nx >= N or ny < 0 or ny >= N:
+            continue
 
-            if nx < 0 or nx >= N or ny < 0 or ny >= N:
-                continue
+        if board[nx][ny] != '1':
+            continue
 
-            if board[nx][ny] != '1':
-                continue
-
-            # 방문 처리
-            board[nx][ny] = -1
-            cnt += 1
-            q.append((nx, ny))
-
-    complex.append(cnt)
+        # 방문 처리
+        board[nx][ny] = -1
+        cnt += 1
+        dfs(nx, ny)
 
 
 for i in range(N):
     for j in range(N):
         if board[i][j] == '1':
-            bfs(i, j)
+            board[i][j] = -1
+            cnt = 1
+            dfs(i, j)
+            complex.append(cnt)
 
 # 오름차순 정렬
 complex.sort()
