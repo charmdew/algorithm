@@ -7,6 +7,9 @@ dp = [1e9] * (100001)
 for _ in range(n):
     coin = int(input())
 
+    if dp[coin] == 1:
+        continue
+    
     dp[coin] = 1
 
     for x in range(coin+1, k+1):
