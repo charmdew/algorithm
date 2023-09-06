@@ -14,22 +14,22 @@ def solution(board):
     q = deque()
     
     # 방문배열 저장
-    v = [[False]*M for _ in range(N)]
+    visited = [[False]*M for _ in range(N)]
     
     # 시작지점
     for i in range(N):
         for j in range(M):
             if board[i][j] == 'R':
-                v[i][j] = True
+                visited[i][j] = True
                 # (말의 위치, 이동횟수, 방문배열)
-                q.append((i, j, 0, v))
+                q.append((i, j, 0))
                 break
         if len(q)>0:
             break
     
     arrive = False
     while q:
-        x, y, cnt, visited = q.popleft()
+        x, y, cnt = q.popleft()
         
         # 상하좌우 이동
         for i in range(4):
@@ -66,7 +66,7 @@ def solution(board):
                 arrive = True
             
             visited[nx][ny] = True
-            q.append((nx, ny, cnt+1, visited))
+            q.append((nx, ny, cnt+1))
         
         if arrive:
             answer = cnt + 1
