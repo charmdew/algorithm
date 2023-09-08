@@ -1,30 +1,19 @@
 # 다른사람 풀이
-ans = 0
-num = 0
-chkX = [False for i in range(32)]
-chkCross1 = [False for i in range(32)]
-chkCross2 = [False for i in range(32)]
-
-def nq(y, n):
-    global ans
-    x = 0
-    if y > n:
-        ans+=1
-    for x in range(1, n+1):
-        if chkX[x] or chkCross1[y + x] or chkCross2[(y - x) + n]:
-            continue
-        chkX[x] = True
-        chkCross1[y + x] = True
-        chkCross2[(y - x) + n] = True
-
-        nq(y + 1, n)
-        chkX[x] = False
-        chkCross1[y + x] = False
-        chkCross2[(y - x) + n] = False
-
 def solution(n):
-    nq(1, n)
-    return ans
+    check_col = [False] * 100; check_d1 = [False] * 100; check_d2 = [False] * 100
+    def process(row):
+        answer = 0
+        if row == n+1:
+            return 1
+        for i in range(1,n+1):
+            d1 = row+i; d2 = n + (row - i)
+            if check_col[i] == False and check_d1[d1] == False and check_d2[d2] == False:
+                check_col[i] = True; check_d1[d1] = True; check_d2[d2] = True
+                answer += process(row+1)
+                check_col[i] = False; check_d1[d1] = False; check_d2[d2] = False
+        return answer
+    answer = process(1)
+    return answer
 
 
 # answer = 0
