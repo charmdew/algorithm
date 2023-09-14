@@ -14,6 +14,7 @@ def solution(expression):
     answer = 0
     
     expression = re.split('([-|+|*])', expression)
+    # 숫자는 정수형으로 변환
     for i in range(len(expression)):
         if i%2==0:
             expression[i] = int(expression[i])
