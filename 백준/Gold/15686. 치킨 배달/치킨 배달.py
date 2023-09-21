@@ -1,66 +1,49 @@
-# N(2 ≤ N ≤ 50), M(1 ≤ M ≤ 13) 입력
+# 큐를 사용해서 (행, 열, 거리)를 저장한 후 bfs 돌려서 치킨거리를 구하면 시간초과 뜸..
+
+from itertools import combinations
+import sys
+
+input = sys.stdin.readline
+
 N, M = map(int, input().split())
 
+# 도시의 정보 입력
 city = [list(map(int, input().split())) for _ in range(N)]
 
-home = []
+# 치킨집 정보 저장
 chicken = []
-
+home = []
 for i in range(N):
     for j in range(N):
-        if city[i][j] == 1:
-            home.append((i, j))
-        elif city[i][j] == 2:
+        if city[i][j] == 2:
             chicken.append((i, j))
+            # city[i][j] = 0  # 빈칸으로 변경
+        elif city[i][j] == 1:
+            home.append((i, j))
 
-# 치킨집 개수
-n_chick = len(chicken)
+# 상하좌우
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
 
-# 모든 조합 저장하기
-case = []
+# 도시의 치킨거리 최솟값 구하기
+answer = 1e9
 
-# 조합 구하기
-def dfs(comb, i, N, M):
-    # M 개수만큼 뽑았으면
-    if len(comb) == M:
-        case.append(list(comb))
-        # print(comb)
-        # print(case)
-        return
+# 치킨집 중에 M개 선택
+for case in combinations(chicken, M):
 
-    # 범위를 벗어나면
-    if i >= n_chick:
-        return
+    # 치킨 거리 계산
+    city_dist = 0
 
-    # i 포함
-    comb.append(chicken[i])
-    dfs(comb, i+1, N, M)
+    # 집과 치킨집 사이 거리 계산
+    for hx, hy in home:
+        chicken_dist = 1e9
+        # case에 담긴 치킨집 표시
+        for cx, cy in case:
+            dist = abs(hx-cx) + abs(hy-cy)
+            chicken_dist = min(chicken_dist, dist)
 
-    # i 포함 안하는 경우
-    comb.pop()
-    dfs(comb, i+1, N, M)
+        city_dist += chicken_dist
 
+    answer = min(answer, city_dist)
 
-def distance(ch):
-    dist = 0
-    # 모든 집에 대해서
-    for h in home:
-        d = 101
-        # 모든 치킨 거리 비교
-        for c in ch:
-            # print(h[0],h[1], c[0],c[1])
-            d = min(abs(c[0]-h[0])+abs(c[1]-h[1]), d)
-        dist += d
-    return dist
-
-
-# 치킨집 M개를 뽑는 경우 구하기 (조합)
-dfs(list(), 0, N, M)
-# print(case)
-
-d_sum = 1300
-for c in case:
-    d_sum = min(d_sum, distance(c))
-print(d_sum)
-
-
+print(answer)
