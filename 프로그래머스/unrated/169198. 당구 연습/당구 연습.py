@@ -1,11 +1,12 @@
+# 코너도 고려해야 하는 줄 알았는데 고려할 필요가 없었음..
+# https://school.programmers.co.kr/questions/53910
+
 def solution(m, n, startX, startY, balls):
     answer = []
     
     # 공을 적어도 벽에 한 번은 맞춘 후 목표 공에 맞힌다
     for a, b in balls:
         up, down, left, right = 1e9, 1e9, 1e9, 1e9
-        # 모서리
-        c1, c2, c3, c4 = 1e9, 1e9, 1e9, 1e9
         
         # 위
         up = (startX-a)**2 + (2*n-startY-b)**2
@@ -36,8 +37,8 @@ def solution(m, n, startX, startY, balls):
             # startX가 a보다 작을 때 오른쪽 벽면 불가능(벽면에 맞기 전에 공에 맞음)
             else: 
                 right = 1e9
-                
-        dist = min(up, down, left, right, c1, c2, c3, c4)
+        
+        dist = min(up, down, left, right)
         answer.append(dist)
     
     return answer
