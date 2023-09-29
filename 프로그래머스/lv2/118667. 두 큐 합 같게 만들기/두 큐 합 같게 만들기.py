@@ -1,30 +1,35 @@
 def solution(queue1, queue2):
-    answer = -1
+    answer = -2
     
-    # 각 큐의 원소 합
-    sum1, sum2 = sum(queue1), sum(queue2)
-
-    k = (sum1+sum2)//2
+    sum1 = sum(queue1) 
+    sum2 = sum(queue2)
+    target = (sum1 + sum2)//2
     
-    # 큐의 원소 합을 같게 만들기 위해 필요한 작업의 최소 횟수
-    cnt = 0
+    # 투 포인터 사용하기
+    p1, p2 = 0, len(queue1)
     
-    # 두 큐를 합친 큐
     q = queue1 + queue2
-    l = len(q)
     
-    # 투 포인터 사용
-    s, e = -1, len(queue1)-1
-    while s<e and e<2*l:
-        if sum1 == k:
-            answer = cnt
-            break 
-        elif sum1 < k:
-            e += 1
-            sum1 += q[e%l]
+    # 움직인 횟수
+    cnt = 0
+    while sum1 != target:
+        # 불가능한 경우
+        if p1 > p2 or p2 >= len(q):
+            cnt = -1
+            break
+
+        # 값이 더 작다면 우측 포인터 오른쪽으로
+        if sum1 > target:
+            sum1 -= q[p1]
+            p1 += 1
+        
+        # 값이 더 크다면 좌측 포인터 왼쪽으로 
         else:
-            s += 1
-            sum1 -= q[s%l]
+            sum1 += q[p2]
+            p2 += 1
+            
         cnt += 1
+
+    answer = cnt
     
     return answer
