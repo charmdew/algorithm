@@ -1,77 +1,75 @@
 import sys
-from collections import deque
-
 input = sys.stdin.readline
 
-# 보드의 크기 N 입력 (2 ≤ N ≤ 100)
+from collections import deque
+
+# 보드의 크기 N(2 ≤ N ≤ 100) 입력
 N = int(input())
 
-# 0: 빈칸, 1: 뱀 위치, 2: 사과 위치
-board = [[0]*N for _ in range(N)]
-
-# 사과의 개수 K (0 ≤ K ≤ 100)
+# 사과의 개수 K(0 ≤ K ≤ 100) 입력
 K = int(input())
-# 사과의 위치 입력
-for _ in range(K):
-    r, c = map(int, input().split())
-    # 1행 1열부터 시작하므로 인덱스 -1 처리
-    board[r-1][c-1] = 2
 
-# 우하좌상 방향
+# 사과의 위치 입력
+apple = [[False]*N for _ in range(N)]
+for _ in range(K):
+  r, c = map(int, input().split())
+  apple[r-1][c-1] = True
+
+# 뱀의 방향 변환 횟수 L(1 ≤ L ≤ 100) 입력
+L = int(input())
+dir = deque([list(input().split()) for _ in range(L)])
+
+# 우, 하, 좌, 상
 dx = [0, 1, 0, -1]
 dy = [1, 0, -1, 0]
 
-# 뱀은 맨위 맨좌측에 위치
-snake = deque()
-snake.append((0, 0))
+# 뱀 위치 저장
+snake = [[False]*N for _ in range(N)]
+snake[0][0] = True
 
-# 처음에 오른쪽을 향함
-sd = 0
+q = deque()
+q.append((0, 0)) # 뱀 시작 위치
+time = 0 # 경과한 시간(초)
+d = 0 # 시작 방향 오른쪽
 
-# 뱀의 방향 변환 횟수 L
-L = int(input())
-# 방향 변환 정보
-change = dict()
-for _ in range(L):
-    X, C = input().split()
-    change[int(X)] = C
+while q:
+  r, c = q[-1]
 
-time = 0
-finish = False
-# 초마다 뱀 이동
-while True:
-    time += 1
+  # 뱀의 방향 변환 정보 확인
+  if dir and int(dir[0][0])== time:
+    if dir[0][1]== 'D': # 오른쪽
+      d += 1
+      if d == 4:
+        d = 0
+    else: # 왼쪽
+      d -= 1
+      if d==-1 :
+        d = 3
+    
+    dir.popleft()
+    # print(time)
 
-    x, y = snake[-1]
+  # 다음칸
+  nr = r+ dx[d]
+  nc = c+ dy[d]
 
-    # 뱀은 몸길이를 늘려 머리를 다음칸에 위치시킴
-    nx = x + dx[sd]
-    ny = y + dy[sd]
+  time += 1
+  # print(nr, nc, time)
+  # 벽 또는 자기 자신의 몸과 부딪히는 경우
+  if nr>=N or nr<0 or nc>=N or nc<0 or snake[nr][nc]:
+    break
 
-    # 벽이나 자기자신의 몸과 부딪히면 게임이 끝남
-    if nx < 0 or nx >= N or ny < 0 or ny >= N or board[nx][ny] == 1:
-        finish = True
-        break
+  # 다음칸 추가
+  q.append((nr, nc))
+  snake[nr][nc] = True
+  
+  # 사과가 있는 경우
+  if apple[nr][nc]:
+    apple[nr][nc] = False
+    continue
 
-    snake.append((nx, ny))
+  # 꼬리가 위치한 칸 비워줌
+  x, y = q.popleft()
+  snake[x][y] = False  
 
-    # 이동한 칸에 사과가 없다면
-    if board[nx][ny] != 2:
-        # 몸길이를 줄여서 꼬리가 위치한 칸을 비워줌
-        tx, ty = snake.popleft()
-        board[tx][ty] = 0
-
-    # 뱀 추가된 위치 표시
-    board[nx][ny] = 1
-
-    # print(time, "초 후, ", snake)
-
-    if time in change:
-        # 방향 변경
-        if change[time] == 'L':  # 왼쪽 90도 방향
-            sd = (sd+3) % 4
-        else:  # 오른쪽 90도 방향
-            sd = (sd+1) % 4
-
-if finish:
-    print(time)
+print(time)
