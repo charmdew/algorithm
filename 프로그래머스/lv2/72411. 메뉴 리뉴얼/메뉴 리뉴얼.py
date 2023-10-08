@@ -1,47 +1,37 @@
-"""
-메뉴 조합 -> 코스 요리
-
-코스요리 메뉴구성
-- 이전에 각 손님들이 주문할 때 가장 많이 함께 주문한 단품 메뉴들
-- 최소 2가지 이상
-- 최소 2명 이상의 손님으로부터 주문된 단품메뉴 조합
-
-"""
 from itertools import combinations
+from collections import defaultdict
 
 def solution(orders, course):
     answer = []
     
-    case = [dict() for i in range(11)]
-    order = [list(o) for o in orders]
+    # course_menu[i] : 단품메뉴 i개로 구성된 모든 코스요리 정보 
+    # course_menu[i] = { 메뉴구성1: 주문횟수1, 메뉴구성2: 주문횟수2...}
+    course_menu = [defaultdict(int) for _ in range(11)]
         
-    # 코스요리를 구성하는 단품메뉴들의 갯수별 메뉴 조합 구하기
-    for c in course:
-        for i, o in enumerate(order):
-            # 메뉴 조합 구하기 
-            comb = combinations(o, c)
-            for com in comb:
-                s_dict = "".join(sorted(com))
-                if s_dict not in case[c]:
-                    case[c][s_dict]=1
-                else:
-                    case[c][s_dict]+=1
-    
-        s_case = list(zip(case[c].keys(),case[c].values()))
-        s_case.sort(key=lambda x:x[1], reverse=True)
+    for order in orders:
+        menu = list(order)
+        menu.sort()
+        # 2개부터 메뉴 총개수까지 가능한 모든 조합 확인
+        for i in range(2, len(menu)+1):
+            for case in combinations(menu, i):
+                m = "".join(case)
+                course_menu[i][m] += 1    
+                
+    for i in course:
+        # 단품메뉴 i개로 구성된 코스요리 중 주문횟수 최댓값 구하기
+        max_cnt = 0
+        if course_menu[i].values():
+            max_cnt = max(course_menu[i].values())
         
-        if s_case:
-            m = s_case[0][1]
-            
-            # 주문한 손님이 1명 이하인 경우
-            if m<=1:
-                continue
-            
-            for x in s_case:
-                if x[1]<m:
-                    break
-                answer.append(x[0])
+        # 최대 주문횟수가 2보다 작은 경우 넘어감
+        if max_cnt < 2:
+            continue
         
+        # 최대 주문횟수에 해당하는 코스요리 추가
+        for menu, cnt in course_menu[i].items():
+            if cnt == max_cnt:
+                answer.append(menu)
+
     answer.sort()
     
     return answer
