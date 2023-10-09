@@ -7,17 +7,17 @@ def solution(orders, course):
     # course_menu[i] : 단품메뉴 i개로 구성된 모든 코스요리 정보 
     # course_menu[i] = { 메뉴구성1: 주문횟수1, 메뉴구성2: 주문횟수2...}
     course_menu = [defaultdict(int) for _ in range(11)]
-        
-    for order in orders:
-        menu = list(order)
-        menu.sort()
-        # 2개부터 메뉴 총개수까지 가능한 모든 조합 확인
-        for i in range(2, len(menu)+1):
-            for case in combinations(menu, i):
-                m = "".join(case)
-                course_menu[i][m] += 1    
                 
     for i in course:
+        for order in orders:
+            menu = list(order)
+            menu.sort()
+            
+            # i개로 구성된 코스요리 
+            for case in combinations(menu, i):
+                m = "".join(case)
+                course_menu[i][m] += 1   
+        
         # 단품메뉴 i개로 구성된 코스요리 중 주문횟수 최댓값 구하기
         max_cnt = 0
         if course_menu[i].values():
