@@ -3,57 +3,48 @@ from collections import deque
 def solution(maps):
     answer = []
     
-    # 상, 하, 좌, 우     
-    dr = [-1, 1, 0, 0]
-    dc = [0, 0, -1, 1]
+    N, M = len(maps), len(maps[0])
     
-    R = len(maps)
-    C = len(maps[0])
+    # 상, 하, 좌, 우
+    dx = [-1, 1, 0, 0]
+    dy = [0, 0, -1, 1]
+
+    # 방문체크
+    visited = [[False]*M for _ in range(N)]
     
-    # 방문 여부 저장 배열
-    visited = [[False]*C for _ in range(R)]
-        
-    
-    for i in range(R):
-        for j in range(C):
-            # 숫자라면 bfs 수행
+    for i in range(N):
+        for j in range(M):
             if maps[i][j] != 'X' and not visited[i][j]:
-                visited[i][j] = True
-                
-                # 식량 합 저장
-                food = int(maps[i][j])
+                # 최대 며칠 머물 수 있는지
+                days = int(maps[i][j])
                 
                 q = deque()
                 q.append((i, j))
+                visited[i][j] = True
+                
                 while q:
-                    r, c = q.popleft()
-
-                    for k in range(4):
-                        nr = r + dr[k]
-                        nc = c + dc[k]
-
-                        # 경계 체크
-                        if nr<0 or nr>=R or nc<0 or nc>=C:
+                    x, y = q.popleft()
+                    
+                    for d in range(4):
+                        nx = x + dx[d]
+                        ny = y + dy[d]
+                        
+                        # 경계확인, 방문체크
+                        if nx < 0 or nx >= N or ny <0 or ny >= M or visited[nx][ny]:
                             continue
-
-                        # 방문한 적이 있거나 바다인 경우 넘어감
-                        if visited[nr][nc] or maps[nr][nc]=='X':
+                        
+                        if maps[nx][ny] == 'X':
                             continue
-
-                        # 식량 추가
-                        food += int(maps[nr][nc])
-                        # 무인도에 땅 추가
-                        q.append((nr, nc))
-                        # 방문 처리
-                        visited[nr][nc] = True
-
-                answer.append(food)
-    
+                            
+                        days += int(maps[nx][ny])
+                        visited[nx][ny] = True
+                        q.append((nx, ny))
+                        
+                answer.append(days)
+              
     # 오름차순
     answer.sort()
-    
-    # 지낼 수 있는 무인도가 없다면
     if not answer:
-        answer.append(-1)
-    
+        answer = [-1]
+                        
     return answer
