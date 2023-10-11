@@ -1,196 +1,90 @@
-import sys
-from itertools import product
-
-input = sys.stdin.readline
+# 다른사람 풀이!! 시간 빠름
+# 내 풀이는 1300ms인데 이 풀이는 332ms
 
 N, M = map(int, input().split())
 
-room_info = [list(map(int, input().split())) for _ in range(N)]
-room = [[room_info[i][j] for j in range(M)] for i in range(N)]
-
-# CCTV 위치, 사각지대 영역 수
-camera_pos, blind_cnt, blind_spot = [], 0, 0
+board = []
+wall = []
+cctv = []
 for i in range(N):
+    line = list(map(int, input().split()))
     for j in range(M):
-        if 0 < room[i][j] < 6:
-            camera_pos.append((i, j))
-        if room[i][j] == 0:
-            blind_cnt += 1
+        if line[j] == 6:
+            wall.append((i,j))
+        elif line[j] != 0:
+            cctv.append((i,j,line[j]))
+    board.append(line)
+# t r b l
+dx = [-1,0,1,0]
+dy = [0,1,0,-1]
 
-
-def up(cx, cy):  # 위
-    global N, M, blind_spot
-
-    for x in range(cx-1, -1, -1):
-        # 벽인 경우 끝
-        if room[x][cy] == 6:
-            break
-
-        # 감시 영역이거나 다른 cctv 카메라 있는 경우 넘어감
-        if room[x][cy] == '#' or 0 < room[x][cy] < 6:
+def cctv_act_direction(x,y, direction) -> list[tuple]:
+    result = []
+    while True:
+        x += dx[direction]
+        y += dy[direction]
+        if x < 0 or x >= N or y < 0 or y >= M:
+            return result
+        if board[x][y] == 6:
+            return result
+        elif board[x][y] in [1,2,3,4,5]:
             continue
-
-        # 사각지대 감소
-        room[x][cy] = '#'
-        blind_spot -= 1
-
-
-def down(cx, cy):  # 아래
-    global N, M, blind_spot
-
-    for x in range(cx+1, N):
-        # 벽인 경우 끝
-        if room[x][cy] == 6:
-            break
-
-        # 감시 영역이거나 다른 cctv 카메라 있는 경우 넘어감
-        if room[x][cy] == '#' or 0 < room[x][cy] < 6:
-            continue
-
-        # 사각지대 감소
-        room[x][cy] = '#'
-        blind_spot -= 1
-
-
-def left(cx, cy):  # 왼쪽
-    global N, M, blind_spot
-
-    for y in range(cy-1, -1, -1):
-        # 벽인 경우 끝
-        if room[cx][y] == 6:
-            break
-
-        # 감시 영역이거나 다른 cctv 카메라 있는 경우 넘어감
-        if room[cx][y] == '#' or 0 < room[cx][y] < 6:
-            continue
-
-        # 사각지대 감소
-        room[cx][y] = '#'
-        blind_spot -= 1
-
-
-def right(cx, cy):  # 아래
-    global N, M, blind_spot
-
-    for y in range(cy+1, M):
-        # 벽인 경우 끝
-        if room[cx][y] == 6:
-            break
-
-        # 감시 영역이거나 다른 cctv 카메라 있는 경우 넘어감
-        if room[cx][y] == '#' or 0 < room[cx][y] < 6:
-            continue
-
-        # 사각지대 감소
-        room[cx][y] = '#'
-        blind_spot -= 1
-
-
-def cctv_1(d, x, y):
-    global N, M, blind_spot
-
-    if d == 0:
-        right(x, y)
-    elif d == 1:
-        down(x, y)
-    elif d == 2:
-        left(x, y)
-    else:
-        up(x, y)
-
-
-def cctv_2(d, x, y):
-    global N, M, blind_spot
-
-    if d == 0:
-        left(x, y)
-        right(x, y)
-    elif d == 1:
-        up(x, y)
-        down(x, y)
-    else:
-        return
-
-
-def cctv_3(d, x, y):
-    global N, M, blind_spot
-
-    if d == 0:
-        up(x, y)
-        right(x, y)
-    elif d == 1:
-        right(x, y)
-        down(x, y)
-    elif d == 2:
-        down(x, y)
-        left(x, y)
-    else:
-        left(x, y)
-        up(x, y)
-
-
-def cctv_4(d, x, y):
-    global N, M, blind_spot
-
-    if d == 0:
-        left(x, y)
-        up(x, y)
-        right(x, y)
-    elif d == 1:
-        up(x, y)
-        right(x, y)
-        down(x, y)
-    elif d == 2:
-        right(x, y)
-        down(x, y)
-        left(x, y)
-    else:
-        down(x, y)
-        left(x, y)
-        up(x, y)
-
-
-def cctv_5(d, x, y):
-    global N, M, blind_spot
-
-    if d == 0:
-        left(x, y)
-        right(x, y)
-        down(x, y)
-        up(x, y)
-    else:
-        return
-
-
-# 사각 지대의 최소 크기
-answer = 64
-
-
-n = len(camera_pos)
-for case in product(range(4), repeat=n):
-    # 사각지대 크기
-    blind_spot = blind_cnt
-
-    for i in range(n):
-        r, c = camera_pos[i]
-
-        if room[r][c] == 1:
-            cctv_1(case[i], r, c)
-        elif room[r][c] == 2:
-            cctv_2(case[i], r, c)
-        elif room[r][c] == 3:
-            cctv_3(case[i], r, c)
-        elif room[r][c] == 4:
-            cctv_4(case[i], r, c)
         else:
-            cctv_5(case[i], r, c)
+            result.append((x,y))
 
-    # for i in range(N):
-    #     print(*room[i])
-    # print(blind_spot)
-    answer = min(answer, blind_spot)
+# traveled -> list[tuple]
+def cctv_act(x,y, num, traveled):
+    result = []
+    if num == 1:
+        for i in range(4):
+            new_traveled = traveled + cctv_act_direction(x,y,i)
+            new_traveled = list(set(new_traveled))
+            if new_traveled not in result:
+                result.append(new_traveled)
+    elif num == 2:
+        for i in range(2):
+            new_traveled = traveled + cctv_act_direction(x,y,i) + cctv_act_direction(x,y,i+2)
+            new_traveled = list(set(new_traveled))
+            if new_traveled not in result:
+                result.append(new_traveled)
+    elif num == 3:
+        for i in range(4):
+            new_traveled = traveled + cctv_act_direction(x,y,i) + cctv_act_direction(x,y,i-1)
+            new_traveled = list(set(new_traveled))
+            if new_traveled not in result:
+                result.append(new_traveled)
+    elif num == 4:
+        for i in range(4):
+            new_traveled = traveled + cctv_act_direction(x,y,i) + cctv_act_direction(x,y,i-1) + cctv_act_direction(x,y,i-2)
+            new_traveled = list(set(new_traveled))
+            if new_traveled not in result:
+                result.append(new_traveled)
+    else:
+        new_traveled = []
+        for i in range(4):
+            new_traveled += cctv_act_direction(x,y,i)
+            new_traveled += traveled
+        new_traveled = list(set(new_traveled))
+        if new_traveled not in result:
+            result.append(new_traveled)
+    
+    return result
 
-    # 사무실 정보 초기화
-    room = [[room_info[i][j] for j in range(M)] for i in range(N)]
+total = [[]]
 
-print(answer)
+for cc in cctv:
+    temp = []
+    for i in range(len(total)):
+        temp.extend(cctv_act(cc[0],cc[1], cc[2], total[i]))
+    total = temp
+
+cctv_count = len(cctv)
+wall_count = len(wall)
+
+global_min = N*M
+for i in total:
+    square = N*M - cctv_count - wall_count - len(i)
+    if global_min > square:
+        global_min = square
+
+print(global_min)
